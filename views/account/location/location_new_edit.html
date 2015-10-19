@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form id="location-form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" {% if location %}value="{{ location.name }}"{% else %}placeholder="Enter Location Name"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" {% if location %}value="{{ location.country }}"{% else %}placeholder="Enter Location Country"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" class="form-control" id="state" name="state" {% if location %}value="{{ location.state }}"{% else %}placeholder="Enter Location State"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" {% if location %}value="{{ location.city }}"{% else %}placeholder="Enter Location City"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="location-type">Location Type</label>
+                        <input type="text" class="form-control" id="location-type" name="location-type" {% if location %}value="{{ location.location_type }}"{% else %}placeholder="Enter Location Type"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="adult-ads-restricted">Are Adult Ads Restricted</label>
+                        <input type="text" class="form-control" id="adult-ads-restricted" name="adult-ads-restricted" {% if location %}value="{{ location.adult_ads_restricted }}"{% else %}placeholder="Does Location Restrict Adult Ads"{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="adult-oriented">Is Location Adult Oriented</label>
+                        <input type="text" class="form-control" id="adult-oriented" name="adult-oriented" {% if location %}value="{{ location.adult_oriented }}"{% else %}placeholder="Is Location Adult Oriented"{% endif %}>
+                    </div>
+                    <input type="button" class="btn btn-primary" onclick="submitLocation()" value="{%  if location %}Edit{% else %}Create{% endif %} New Company">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {%  include "includes/spinner.html" %}
+    <script type="text/javascript">
+        var submitLocation = function(){
+            showSpinner();
+            $.ajax({
+                type: {% if location %}"PUT"{% else %}"POST"{% endif %},
+                url: "/account/location/{% if location %}{{ location.key.id() }}{% endif %}",
+                data: $("#location-form").serialize() + "&company-id=5021194726146048",
+                dataType: "JSON",
+                success: function(response) {
+                    hideSpinner();
+                    if (response.success) {
+                        window.location.href = response.goto_url;
+                    } else {
+                        $("#error-message").html(response.error_message);
+                        $("#error-alert").removeClass("hidden");
+                    }
+                }
+            });
+        };
+    </script>
+{% endblock %}
